@@ -131,6 +131,20 @@ def alternate_gagefigure():
     # print(aggregate_values)
 
 
+def correlation():
+    df=pd.concat([pd.json_normalize(x["data"]).assign(year=x["year"]) for index,x in pd.read_json(INPUT_DIRECTORY/"size_with_counts.json").iterrows()],ignore_index=True)
+
+    df=df[["size","count","year"]]
+    a = df.groupby("year").corr(method="spearman")#.agg(["mean","sem"])
+    b = df.drop("year",axis=1).corr(method="spearman")
+    print("Correlations per year")
+    print(a)
+
+    print("\nGeneral correlation")
+    print(b)
+    return
+
 if __name__ == "__main__":
     # size_percentages_with_stats()
-    alternate_gagefigure()
+    # alternate_gagefigure()
+    correlation()
