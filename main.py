@@ -44,6 +44,7 @@ def size_percentages_with_stats():
 
     ax.set_ylabel(r"% of responses")
     ax.set_xticks(np.array(a.index))
+    ax.set_ylim([0,100])
 
     # legend for likert
     ax.legend(title="Group Size",loc="lower left",ncol=len(stacked_box_plot_objects),bbox_to_anchor=(0, -0.2))
@@ -54,6 +55,7 @@ def size_percentages_with_stats():
     ax2 = ax.twinx()
     ax2.set_ylabel("Mean")
     ax2.set_ylim([1,5])
+    ax2.set_yticks([1,2,3,4,5])
     years = np.array(a.index)
     means = np.array([x[0] for x in a.values])
     meancolor = "red"
