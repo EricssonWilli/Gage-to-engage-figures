@@ -54,8 +54,17 @@ def size_percentages_with_stats():
     ax2 = ax.twinx()
     ax2.set_ylabel("Mean")
     ax2.set_ylim([1,5])
-    ax2.errorbar(x=np.array(a.index),y=np.array([x[0] for x in a.values]),yerr=np.array([x[1] for x in a.values]),linestyle="",color="red",capsize=10, marker=".",markersize=10,label="Mean")
+    years = np.array(a.index)
+    means = np.array([x[0] for x in a.values])
+    meancolor = "red"
+    ax2.errorbar(x=years,y=means,yerr=np.array([x[1] for x in a.values]),linestyle="",color=meancolor,capsize=10, marker=".",markersize=10,label="Mean")
+    for year,mean in zip(years,means):
+        ax2.text(year+0.1,mean,"{:.1f}".format(mean),color=meancolor,verticalalignment="center")
+
+    # legend for mean
     ax2.legend(loc="lower right",bbox_to_anchor=(1.0, -0.2))
+
+
 
     plt.savefig(OUTPUT_DIRECTORY/"size_percentages_with_stats_new.pdf")
 
