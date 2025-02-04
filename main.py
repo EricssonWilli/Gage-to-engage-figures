@@ -135,12 +135,14 @@ def correlation():
     df=pd.concat([pd.json_normalize(x["data"]).assign(year=x["year"]) for index,x in pd.read_json(INPUT_DIRECTORY/"size_with_counts.json").iterrows()],ignore_index=True)
 
     df=df[["size","count","year"]]
-    a = df.groupby("year").corr(method="spearman")#.agg(["mean","sem"])
-    b = df.drop("year",axis=1).corr(method="spearman")
-    print("Correlations per year")
+    corr_method = "spearman"
+    a = df.groupby("year").corr(method=corr_method)#.agg(["mean","sem"])
+    b = df.drop("year",axis=1).corr(method=corr_method)
+
+    print(f"Correlations per year (using {corr_method} correlation)")
     print(a)
 
-    print("\nGeneral correlation")
+    print(f"\nGeneral correlation (using {corr_method} correlation)")
     print(b)
     return
 
