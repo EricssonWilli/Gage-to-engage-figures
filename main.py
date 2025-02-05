@@ -136,14 +136,55 @@ def correlation():
 
     df=df[["size","count","year"]]
     corr_method = "spearman"
+    a_number_of_answers = df.groupby("year").agg({"size":"count"})
+    print("Numbers of answers for each year")
+    print(a_number_of_answers)
     a = df.groupby("year").corr(method=corr_method)#.agg(["mean","sem"])
     b = df.drop("year",axis=1).corr(method=corr_method)
 
     print(f"Correlations per year (using {corr_method} correlation)")
-    print(a)
+    corr_per_year={x[0]:y for x,y in a["size"][1::2].items()}
+    print("\n".join([f"{x} {y}" for x,y in corr_per_year.items()]))
+
+    # per year histogram figures
+
+    for year,corr in corr_per_year.items():
+        data=df[df["year"]==year]
+        x=data["count"]
+        y=data["size"]
+
+        fig,ax = plt.subplots(layout="constrained")
+        ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap='Blues',norm=mpl.colors.LogNorm())
+
+        ax.title.set_text(f"Year {year} histogram, {corr_method} correlation {corr:.4f}")
+
+        ax.set_xlabel("Was in a group of")
+        ax.set_ylabel("Was hoping to be in a group of")
+        ax.set_xticks(np.arange(1,np.max(x)+1,1))
+        ax.set_yticks(np.arange(1,np.max(y)+1,1))
+
+        fig.savefig(OUTPUT_DIRECTORY/f"{year}_histogram.pdf")
 
     print(f"\nGeneral correlation (using {corr_method} correlation)")
-    print(b)
+    print(f"{b["size"][1::2]["count"]}")
+    # overall (general) histogram
+
+    data=df
+    x=data["count"]
+    y=data["size"]
+
+    fig,ax = plt.subplots(layout="constrained")
+    hist = ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap='Blues',norm=mpl.colors.LogNorm())
+
+    ax.title.set_text(f"General histogram, {corr_method} correlation {b["size"][1::2]["count"]:.4f}")
+    fig.colorbar(hist[3],ax=ax,label="Number of answers")
+    ax.set_xlabel("Was in a group of")
+    ax.set_ylabel("Was hoping to be in a group of")
+    ax.set_xticks(np.arange(1,np.max(x)+1,1))
+    ax.set_yticks(np.arange(1,np.max(y)+1,1))
+
+    fig.savefig(OUTPUT_DIRECTORY/f"General_histogram.pdf")
+
     return
 
 if __name__ == "__main__":
