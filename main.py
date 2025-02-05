@@ -104,18 +104,20 @@ def alternate_gagefigure():
     print("Categories from (averaged self reflects) hardest to easiest (combined pre/post)")
     print(hardest_categories)
 
+
     ordered_categories = np.array(hardest_categories.index)
 
-
+    # This puts categories in row number order
+    # ordered_categories = [f"row{i}" for i in range(1,21)]
 
     aggregate_values = df.groupby(["prepost","year"],dropna=False).agg(["mean","sem"])
 
     ordered_aggregate_values = aggregate_values[ordered_categories]
-    print(ordered_aggregate_values)
 
     fig,ax = plt.subplots(layout="constrained")
-    print(ordered_aggregate_values.keys())
-    # return
+    # to plot category difficulty based on all time pre+post averages average:
+    ax.errorbar(ordered_categories,np.array([hardest_categories[cat] for cat in ordered_categories]),color="black",label="Category difficulty",linestyle="--")
+
     years=[2021,2022,2023,2024]
     for prepost,colormap in zip(["pre","post"],[plt.get_cmap("Blues"),plt.get_cmap("Reds")]):
         for year in years:
@@ -189,5 +191,5 @@ def correlation():
 
 if __name__ == "__main__":
     # size_percentages_with_stats()
-    # alternate_gagefigure()
-    correlation()
+    alternate_gagefigure()
+    # correlation()
