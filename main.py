@@ -148,6 +148,8 @@ def correlation():
     corr_per_year={x[0]:y for x,y in a["size"][1::2].items()}
     print("\n".join([f"{x} {y}" for x,y in corr_per_year.items()]))
 
+    colormap = "cool"
+
     # per year histogram figures
 
     for year,corr in corr_per_year.items():
@@ -156,10 +158,14 @@ def correlation():
         y=data["size"]
 
         fig,ax = plt.subplots(layout="constrained")
-        ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap='Blues',norm=mpl.colors.LogNorm())
+        rawdata = [(x,y) for x,y in zip(np.array(x),np.array(y))]
+        x_meshgrid,y_meshgrid = np.mgrid[1:np.max(x)+1:1,1:np.max(y)+1:1]
+        for xx,yy in zip(x_meshgrid.flatten(),y_meshgrid.flatten()):
+            ax.text(xx,yy,f"{rawdata.count((xx,yy))}",horizontalalignment="center",verticalalignment="center",color="black")
+        hist = ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap=colormap,norm=mpl.colors.LogNorm())
 
         ax.title.set_text(f"Year {year} histogram, {corr_method} correlation {corr:.4f}")
-
+        fig.colorbar(hist[3],ax=ax,label="Number of answers")
         ax.set_xlabel("Was in a group of")
         ax.set_ylabel("Was hoping to be in a group of")
         ax.set_xticks(np.arange(1,np.max(x)+1,1))
@@ -176,7 +182,12 @@ def correlation():
     y=data["size"]
 
     fig,ax = plt.subplots(layout="constrained")
-    hist = ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap='Blues',norm=mpl.colors.LogNorm())
+    hist = ax.hist2d(x,y,bins=[np.arange(0.5,(np.max(x)+1),1),np.arange(0.5,(np.max(y)+1),1)], cmap=colormap,norm=mpl.colors.LogNorm())
+    rawdata = [(x,y) for x,y in zip(np.array(x),np.array(y))]
+    x_meshgrid,y_meshgrid = np.mgrid[1:np.max(x)+1:1,1:np.max(y)+1:1]
+    for xx,yy in zip(x_meshgrid.flatten(),y_meshgrid.flatten()):
+        ax.text(xx,yy,f"{rawdata.count((xx,yy))}",horizontalalignment="center",verticalalignment="center",color="black")
+
 
     ax.title.set_text(f"General histogram, {corr_method} correlation {b["size"][1::2]["count"]:.4f}")
     fig.colorbar(hist[3],ax=ax,label="Number of answers")
@@ -191,5 +202,5 @@ def correlation():
 
 if __name__ == "__main__":
     # size_percentages_with_stats()
-    alternate_gagefigure()
-    # correlation()
+    # alternate_gagefigure()
+    correlation()
